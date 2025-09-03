@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>הערכת שכר דירה</title>
+</head>
+<body>
+    <h1>הערכת עלות שכירות דירה</h1>
+    
+    <!-- Display the prediction if available -->
+    {% if prediction is not none %}
+        <h2>מחיר השכירות החזוי: {{ prediction }} ₪</h2>
+    {% endif %}
+    
+    <!-- Display error message if any -->
+    {% if error_message %}
+        <p style="color: red;">שגיאה: {{ error_message }}</p>
+    {% endif %}
+    
+    <!-- Apartment details input form -->
+    <form method="post" enctype="multipart/form-data">
+
+        <label for="address">כתובת:</label>
+        <input type="text" id="address" name="address" required><br><br>
+
+        <label for="description">תיאור:</label>
+        <textarea id="description" name="description" rows="3" cols="40"></textarea><br><br>
+
+        <label for="num_rooms">מספר חדרים:</label>
+        <input type="number" id="num_rooms" name="num_rooms" required><br><br>
+        
+        <label for="area">גודל (מ"ר):</label>
+        <input type="number" id="area" name="area" step="0.1" required><br><br>
+        
+        <label for="floor">קומה:</label>
+        <input type="number" id="floor" name="floor" required><br><br>
+        
+        <label for="total_floors">סה"כ קומות בבניין:</label>
+        <input type="number" id="total_floors" name="total_floors" required><br><br>
+
+        <label for="building_tax"> ועד בית:</label>
+        <input type="number" id="building_tax" name="building_tax"><br><br>
+
+        <label for="monthly_arnona">ארנונה חודשית:</label>
+        <input type="number" id="monthly_arnona" name="monthly_arnona"><br><br>
+
+        <label for="num_of_payments">מספר תשלומים:</label>
+        <input type="number" id="num_of_payments" name="num_of_payments"><br><br>
+
+        <label for="days_to_enter">ימים עד כניסה:</label>
+        <input type="number" id="days_to_enter" name="days_to_enter"><br><br>
+
+        <label for="garden_area">שטח גינה:</label>
+        <input type="number" id="garden_area" name="garden_area" step="0.1"><br><br>
+
+
+        <!-- Boolean features -->
+        <label for="parking">חניה:</label>
+        <select id="parking" name="parking">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <label for="furnished">מרוהט:</label>
+        <select id="furnished" name="furnished">
+            <option value="0">לא מרוהט</option>
+            <option value="1">מרוהט</option>
+        </select><br><br>
+
+        <label for="is_renovated">משופץ:</label>
+        <select id="is_renovated" name="is_renovated">
+            <option value="0">לא</option>
+            <option value="1">כן</option>
+        </select><br><br>
+
+        <label for="has_balcony">מרפסת:</label>
+        <select id="has_balcony" name="has_balcony">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <label for="has_safe_room">ממ"ד:</label>
+        <select id="has_safe_room" name="has_safe_room">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <label for="has_bars">סורגים:</label>
+        <select id="has_bars" name="has_bars">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <label for="handicap">נגישות לנכים:</label>
+        <select id="handicap" name="handicap">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <label for="ac">מיזוג:</label>
+        <select id="ac" name="ac">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <label for="elevator">מעלית:</label>
+        <select id="elevator" name="elevator">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <label for="has_storage">מחסן:</label>
+        <select id="has_storage" name="has_storage">
+            <option value="0">אין</option>
+            <option value="1">יש</option>
+        </select><br><br>
+
+        <!-- Property type -->
+        <label for="property_type">סוג נכס:</label>
+        <select id="property_type" name="property_type" required>
+            <option value="דירה">דירה</option>
+            <option value="גג/פנטהאוז">גג\פנטהאוז</option>
+            <option value="דירת גן">דירת גן</option>
+            <option value="סטודיו/לופט">סטודיו\לופט</option>
+            <option value="כללי">כללי</option>
+            <option value="דופלקס">דופלקס</option>
+            <option value="יחידת דיור">יחידת דיור</option>
+            <option value="פרטי/קוטג'">פרטי\קוטג'</option>
+            <option value="מרתף/פרטר">מרתף\פרטר</option>
+            <option value="חניה">חניה</option>
+            <option value="מחסן">מחסן</option>
+            <option value="דירת נופש">דירת נופש</option>
+            <option value="דו משפחתי">דו משפחתי</option>
+        </select><br><br>
+
+        <!-- Neighborhood -->
+        <label for="neighborhood">שכונה:</label>
+        <select id="neighborhood" name="neighborhood" required>
+            <option value="">בחר שכונה</option>
+            <option value="יפו ג">יפו ג</option>
+            <option value="יפו ד">יפו ד</option>
+            <option value="יפו ב">יפו ב</option>
+            <option value="מרכז יפו מזרחית לשדרות ירושלים">מרכז יפו מזרחית לשדרות ירושלים</option>
+            <option value="תל כביר">תל כביר</option>
+            <option value="התקווה">התקווה</option>
+            <option value="עג'מי">עג'מי</option>
+            <option value="דקר">דקר</option>
+            <option value="שפירא">שפירא</option>
+            <option value="קרית שלום">קרית שלום</option>
+            <option value="עזרא">עזרא</option>
+            <option value="נוה אליעזר">נוה אליעזר</option>
+            <option value="לבנה">לבנה</option>
+            <option value="צהלון">צהלון</option>
+            <option value="שיכוני חסכון">שיכוני חסכון</option>
+            <option value="נוה שאנן">נוה שאנן</option>
+            <option value="יד אליהו">יד אליהו</option>
+            <option value="כפיר">כפיר</option>
+            <option value="נוה ברבור">נוה ברבור</option>
+            <option value="מערב">מערב</option>
+            <option value="אזורי חן">אזורי חן</option>
+            <option value="נוה חן">נוה חן</option>
+            <option value="ניר אביב">ניר אביב</option>
+            <option value="נוה שרת">נוה שרת</option>
+            <option value="תל חיים">תל חיים</option>
+            <option value="רמת אביב">רמת אביב</option>
+            <option value="הדר יוסף">הדר יוסף</option>
+            <option value="כרם התימנים">כרם התימנים</option>
+            <option value="צפון יפו">צפון יפו</option>
+            <option value="גבעת הרצל">גבעת הרצל</option>
+            <option value="פלורנטין">פלורנטין</option>
+            <option value="רמת הטייסים">רמת הטייסים</option>
+            <option value="נחלת יצחק">נחלת יצחק</option>
+            <option value="בצרון">בצרון</option>
+            <option value="רמת ישראל">רמת ישראל</option>
+            <option value="שבזי">שבזי</option>
+            <option value="רמת החייל">רמת החייל</option>
+            <option value="הצפון הישן החלק המרכזי">הצפון הישן החלק המרכזי</option>
+            <option value="הצפון הישן החלק הצפוני">הצפון הישן החלק הצפוני</option>
+            <option value="הצפון הישן החלק הדרום מזרחי">הצפון הישן החלק הדרום מזרחי</option>
+            <option value="הצפון הישן החלק הדרום מערבי">הצפון הישן החלק הדרום מערבי</option>
+            <option value="לב תל אביב החלק הצפוני">לב תל אביב החלק הצפוני</option>
+            <option value="לב תל אביב החלק הדרומי">לב תל אביב החלק הדרומי</option>
+            <option value="בית שטראוס">בית שטראוס</option>
+            <option value="לינקולן">לינקולן</option>
+            <option value="מונטיפיורי">מונטיפיורי</option>
+            <option value="נוה אביבים">נוה אביבים</option>
+            <option value="נאות אפקה א">נאות אפקה א</option>
+            <option value="נאות אפקה ב">נאות אפקה ב</option>
+            <option value="שיכון בבלי">שיכון בבלי</option>
+            <option value="הצפון החדש החלק הצפוני">הצפון החדש החלק הצפוני</option>
+            <option value="הצפון החדש החלק הדרומי">הצפון החדש החלק הדרומי</option>
+            <option value="הצפון החדש סביבת ככר המדינה">הצפון החדש סביבת ככר המדינה</option>
+            <option value="תכנית ל">תכנית ל</option>
+            <option value="הגוש הגדול">הגוש הגדול</option>
+            <option value="הקריה">הקריה</option>
+            <option value="חוף הצוק">חוף הצוק</option>
+            <option value="כוכב הצפון">כוכב הצפון</option>
+            <option value="רמת אביב ג">רמת אביב ג</option>
+            <option value="רמת אביב החדשה">רמת אביב החדשה</option>
+            <option value="אפקה">אפקה</option>
+            <option value="תל ברוך צפון">תל ברוך צפון</option>
+            <option value="מעוז אביב א">מעוז אביב א</option>
+            <option value="המשתלה">המשתלה</option>
+            <option value="גני צהלה">גני צהלה</option>
+            <option value="רביבים">רביבים</option>
+            <option value="פארק צמרת">פארק צמרת</option>
+        </select><br><br>
+
+        <!-- File upload for images (multiple) -->
+        <label for="image_input">תמונות (ניתן לבחור מספר):</label>
+        <input type="file" id="image_input" name="images" multiple><br><br>
+        
+        <!-- Hidden field to store the number of uploaded images -->
+        <input type="hidden" id="num_of_images" name="num_of_images" value="0">
+        
+        <button type="submit">הערך עלות</button>
+    </form>
+    
+    <script>
+        // Update hidden 'num_of_images' field when images are selected
+        document.getElementById('image_input').addEventListener('change', function() {
+            document.getElementById('num_of_images').value = this.files.length;
+        });
+    </script>
+</body>
+</html>
